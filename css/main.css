@@ -1,0 +1,6 @@
+html, body {margin: 0}
+body {padding-top: 50px}
+#canvas {
+    margin: 0 auto;
+    display: block;
+}
