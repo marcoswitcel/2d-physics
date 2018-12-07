@@ -59,6 +59,7 @@ const PLAYER = {
 };
 
 PLAYER.update = function() {
+    this.accel = INTENTION.accelVector();
     this.velocity = this.velocity.add(this.accel);
     this.velocity = this.velocity.limit(5);
     this.position = this.position.add(this.velocity);
@@ -100,11 +101,6 @@ ELMA.render = function render(context) {
 }
 /* PLAYER obj - end */
 
-
-
-
-
-
 function main() {
     CTX.fillStyle = "White";
     CTX.fillRect(0, 0, CONFIG.width, CONFIG.height);
@@ -120,19 +116,29 @@ function main() {
 WORLD.inside.push(PLAYER);
 WORLD.inside.push(ELMA);
 
+const INTENTION = {
+    x : 0,
+    y : 0,
+    taxa : 0.005,
+};
+
+INTENTION.accelVector = function accelVector() {
+    return Vector2D(this.x * this.taxa, this.y * this.taxa);
+};
+
+window.addEventListener("keydown", function (event) {
+    /* O evento keydown se repete, por isso coloquei o limitador */
+    INTENTION.x += (event.key === "d") ? 1 : (event.key === "a") ? -1 : INTENTION.x;
+    INTENTION.x = (INTENTION.x > 1) ? 1 : (INTENTION.x < -1) ? -1 : INTENTION.x;
+    INTENTION.y += (event.key === "s") ? 1 : (event.key === "w") ? -1 : INTENTION.y;
+    INTENTION.y = (INTENTION.y > 1) ? 1 : (INTENTION.y < -1) ? -1 : INTENTION.y;
+});
+window.addEventListener("keyup", function (event) {
+    INTENTION.x -= (event.key === "d") ? 1 : (event.key === "a") ? -1 : INTENTION.x;
+    INTENTION.y -= (event.key === "s") ? 1 : (event.key === "w") ? -1 : INTENTION.y;
+    this.console.log(INTENTION.accelVector());
+});
+
+
 // Run
 main();
-
-const TAXA = 0.005;
-window.addEventListener("keypress", function (event) {
-    const intention = {
-        "w": Vector2D(0, -TAXA),
-        "d": Vector2D(TAXA, 0),
-        "s": Vector2D(0, TAXA),
-        "a": Vector2D(-TAXA, 0)
-    };
-
-    if (event.key in intention) {
-        PLAYER.accel = intention[event.key];
-    }
-});
