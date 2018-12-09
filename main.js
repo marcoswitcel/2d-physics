@@ -11,7 +11,8 @@ CANVAS.height = CONFIG.height;
 
 
 
-const renderizibles = {
+const DEFAULT_UPDATE_RENDER = {
+    update : NOOP,
     render : function render(obj = this) {
         let {color, position, velocity, accel} = obj;        
 
@@ -51,12 +52,12 @@ WORLD.changeOffSet = function changeOffSet(x, y) {
 
 
 /* PLAYER obj - begin */
-const PLAYER = {
+const PLAYER = noProto({
     color: "Blue",
     position: Vector2D(WORLD.width/2, WORLD.height/2),
     velocity: Vector2D(0, 0),
     accel: Vector2D(0, 0),
-};
+});
 
 PLAYER.update = function() {
     this.accel = INTENTION.accelVector();
@@ -77,20 +78,16 @@ PLAYER.render = function render(context) {
     CTX.fillRect(position.x + context.xOffSet, position.y + context.yOffSet, 10, 10);
 }
 
-delegate(PLAYER, renderizibles);
+delegate(PLAYER, DEFAULT_UPDATE_RENDER);
 
-const ELMA = {
+const ELMA = noProto({
     color: "Pink",
     position: Vector2D(WORLD.width/2 + 30, WORLD.height/2 + 20),
     velocity: Vector2D(0, 0),
     accel: Vector2D(0, 0),
-}
+})
 
-ELMA.update = function() {
-    this.velocity = this.velocity.add(this.accel);
-    this.velocity = this.velocity.limit(5);
-    this.position = this.position.add(this.velocity);
-};
+ELMA.update = NOOP;
 
 ELMA.render = function render(context) {
     let {color, position, velocity, accel} = this;
@@ -113,31 +110,11 @@ function main() {
     setTimeout(main, FRAMES_PER_SECOND);
 }
 
-WORLD.inside.push(PLAYER);
-WORLD.inside.push(ELMA);
 
-const INTENTION = {
-    x : 0,
-    y : 0,
-    taxa : 0.005,
-};
-
-INTENTION.accelVector = function accelVector() {
-    return Vector2D(this.x * this.taxa, this.y * this.taxa);
-};
-
-window.addEventListener("keydown", function (event) {
-    /* O evento keydown se repete, por isso coloquei o limitador */
-    INTENTION.x += (event.key === "d") ? 1 : (event.key === "a") ? -1 : INTENTION.x;
-    INTENTION.x = (INTENTION.x > 1) ? 1 : (INTENTION.x < -1) ? -1 : INTENTION.x;
-    INTENTION.y += (event.key === "s") ? 1 : (event.key === "w") ? -1 : INTENTION.y;
-    INTENTION.y = (INTENTION.y > 1) ? 1 : (INTENTION.y < -1) ? -1 : INTENTION.y;
-});
-window.addEventListener("keyup", function (event) {
-    INTENTION.x -= (event.key === "d") ? 1 : (event.key === "a") ? -1 : INTENTION.x;
-    INTENTION.y -= (event.key === "s") ? 1 : (event.key === "w") ? -1 : INTENTION.y;
-    this.console.log(INTENTION.accelVector());
-});
+// Propósito de teste
+for (let elements of [PLAYER, ELMA]) {
+    WORLD.inside.push(elements);
+}
 
 
 // Run
