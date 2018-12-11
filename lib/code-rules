@@ -1,3 +1,4 @@
 # Libs
 * Tem uma descrição no cabeçalho e lista de dependências
-* Não devem invocar funções de outras libs
+* Não devem invocar funções de outras libs,
+  pode usar, mas sem invocação direta
